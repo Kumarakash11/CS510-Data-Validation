@@ -1,0 +1,42 @@
+import pandas as pd
+import csv
+import os
+# Reading csv file using pandas
+us_crash=pd.read_csv('UScrash.csv',header=0)
+# new_df=us_crash
+
+
+# Drop the rows/colums if they dont have any data in them are they are of no use for our analysis.
+new_df.dropna(how="all");
+
+# Filling the NaN with some meaningfull message
+new_df = us_crash.fillna({
+    'Vehicle ID' : 'Missing',
+    'Crash Day' : 'No Date',
+    'Crash Month' : 'No Month',
+    'Crash ID' : 'ID Missing',
+    'Participant ID' :'Participant Missing'
+})
+
+#Filtering the records that happened in 2019
+new_df=new_df[new_df['Crash Year']==2019]
+
+
+# Removing the records that dont have a crash ID AND Participant ID
+new_df=new_df.drop(new_df[new_df['Crash ID'] =="ID Missing"].index)
+
+# Removing the records that dont have a Vehicle ID
+new_df=new_df.drop(new_df[new_df['Vehicle ID'] =="Missing"].index)
+new_df=new_df.drop(new_df[new_df['Participant ID'] =="Participant Missing"].index)
+
+# Splitting file into 3 different seprate dataframes(i.e. Crashed, Vehicles, Participants) for better viewing
+Crashes_DF = new_df[new_df['Record Type'] == 1]
+Crashes_DF = Crashes_DF.dropna(axis=1,how='all')
+
+VehiclesDF = new_df[new_df['Record Type'] == 2]
+VehiclesDF = VehiclesDF.dropna(axis=1,how='all')
+
+ParticipantsDF = new_df[new_df['Record Type'] == 3]
+ParticipantsDF = ParticipantsDF.dropna(axis=1,how='all')
+
+
